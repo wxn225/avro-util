@@ -1,5 +1,7 @@
 package com.linkedin.avro.fastserde;
 
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Paths;
 import org.apache.avro.generic.ColdGenericDatumReader;
 import org.apache.avro.generic.ColdSpecificDatumReader;
 import java.io.File;
@@ -20,6 +22,7 @@ import java.util.function.Supplier;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Decoder;
@@ -27,6 +30,8 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.log4j.Logger;
+
+import static com.linkedin.avro.fastserde.FastSerializerGenerator.*;
 
 
 /**
@@ -57,6 +62,8 @@ public final class FastSerdeCache {
 
   private File classesDir;
   private ClassLoader classLoader;
+  //this is for test
+  private ClassLoader preGenClassLoader;
 
   private Optional<String> compileClassPath;
 
@@ -106,10 +113,18 @@ public final class FastSerdeCache {
     this.executor = executorService != null ? executorService : getDefaultExecutor();
 
     try {
-      Path classesPath = Files.createTempDirectory("generated");
-      classesDir = classesPath.toFile();
+      try {
+        Path classesPath = Files.createDirectory(Paths.get("/tmp/runtimeAvro"));
+        classesDir = classesPath.toFile();
+      }
+      catch (FileAlreadyExistsException e) {
+        classesDir = Paths.get("/tmp/runtimeAvro").toFile();
+      }
       classLoader =
           URLClassLoader.newInstance(new URL[]{classesDir.toURI().toURL()}, FastSerdeCache.class.getClassLoader());
+      preGenClassLoader =
+          URLClassLoader.newInstance(new URL[]{Paths.get("/tmp/generateAvro").toFile().toURI().toURL()},
+                                                                                FastSerdeCache.class.getClassLoader());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -288,6 +303,15 @@ public final class FastSerdeCache {
       }
     }
     return serializer;
+  }
+
+  public void loadPreGenSerializer(Schema schema)
+    throws ClassNotFoundException, Exception{
+    String schemaKey = getSchemaKey(schema, schema);
+    String className = getClassName(schema, "Generic");
+    fastGenericRecordSerializersCache.put(schemaKey, (FastSerializer<?>)
+        preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_8." + className).newInstance());
+    System.out.println(fastGenericRecordSerializersCache.size());
   }
 
   private String getSchemaKey(Schema writerSchema, Schema readerSchema) {

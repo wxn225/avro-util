@@ -5,7 +5,7 @@ public class BenchmarkConstants {
   /**
    * Length of the generated AVRO Arrays
    */
-  public static final Integer ARRAY_SIZE = 10;
+  public static final Integer ARRAY_SIZE = 500;
   /**
    * Size of the generated random AVRO Primitive Strings
    */

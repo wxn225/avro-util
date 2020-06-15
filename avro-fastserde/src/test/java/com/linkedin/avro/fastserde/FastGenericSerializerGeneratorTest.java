@@ -528,6 +528,7 @@ public class FastGenericSerializerGeneratorTest {
     Assert.assertTrue(primitiveApiCalled.get());
   }
 
+
   private <E> void shouldWriteArrayOfPrimitives(Schema.Type elementType, List<E> data) {
     // given
     Schema elementSchema = Schema.create(elementType);

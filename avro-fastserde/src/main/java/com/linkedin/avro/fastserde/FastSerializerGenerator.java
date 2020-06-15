@@ -53,6 +53,7 @@ public class FastSerializerGenerator<T> extends FastSerdeBase {
     final JPackage classPackage = codeModel._package(generatedPackageName);
 
     try {
+
       generatedClass = classPackage._class(className);
 
       final JMethod serializeMethod = generatedClass.method(JMod.PUBLIC, void.class, "serialize");
