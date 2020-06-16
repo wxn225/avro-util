@@ -297,9 +297,10 @@ public final class FastSerdeCache {
           fastGenericRecordSerializersCache.putIfAbsent(schemaKey, new FastSerializerWithAvroGenericImpl(schema));
       if (serializer == null) {
         serializer = fastGenericRecordSerializersCache.get(schemaKey);
-        CompletableFuture.supplyAsync(() -> buildGenericSerializer(schema), executor).thenAccept(s -> {
-          fastGenericRecordSerializersCache.put(schemaKey, s);
-        });
+//        CompletableFuture.supplyAsync(() -> buildGenericSerializer(schema), executor).thenAccept(s -> {
+//          fastGenericRecordSerializersCache.put(schemaKey, s);
+//        });
+        fastGenericRecordSerializersCache.put(schemaKey, buildGenericSerializer(schema));
       }
     }
     return serializer;
@@ -309,9 +310,16 @@ public final class FastSerdeCache {
     throws ClassNotFoundException, Exception{
     String schemaKey = getSchemaKey(schema, schema);
     String className = getClassName(schema, "Generic");
-    fastGenericRecordSerializersCache.put(schemaKey, (FastSerializer<?>)
-        preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_8." + className).newInstance());
-    System.out.println(fastGenericRecordSerializersCache.size());
+//    fastGenericRecordSerializersCache.put(schemaKey, (FastSerializer<?>)
+//    preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_8." + className).newInstance();
+    preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_8." + className);
+
+  }
+//for test
+  public void changeClassLoader() throws Exception {
+    preGenClassLoader =
+        URLClassLoader.newInstance(new URL[]{Paths.get("/tmp/generateAvro").toFile().toURI().toURL()},
+            FastSerdeCache.class.getClassLoader());
   }
 
   private String getSchemaKey(Schema writerSchema, Schema readerSchema) {
