@@ -322,6 +322,10 @@ public final class FastSerdeCache {
             FastSerdeCache.class.getClassLoader());
   }
 
+  public int checkCacheSize() throws Exception {
+    return fastGenericRecordSerializersCache.size();
+  }
+
   private String getSchemaKey(Schema writerSchema, Schema readerSchema) {
     return String.valueOf(Math.abs(Utils.getSchemaFingerprint(writerSchema))) + Math.abs(
         Utils.getSchemaFingerprint(readerSchema));

@@ -45,7 +45,7 @@ import org.openjdk.jmh.annotations.Warmup;
 //@BenchmarkMode(Mode.SingleShotTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 //@Fork(1)
-@Fork(value = 1, jvmArgsAppend = {"-Xms6g", "-Xmx6g", "-XX:+PrintGCDetails", "-Xloggc:/home/gclog.log", "-XX:+UseGCLogFileRotation", "-XX:NumberOfGCLogFiles=1"})
+@Fork(value = 1, jvmArgsAppend = {"-XX:+PrintCommandLineFlags", "-Xms6g", "-Xmx6g", "-XX:+PrintGCDetails", "-Xloggc:/home/gclog.log", "-XX:+UseGCLogFileRotation", "-XX:NumberOfGCLogFiles=1", "-XX:+UseG1GC"})
 //@Threads(10)
 @Warmup(iterations = 5)
 //@Warmup(iterations = 0)
@@ -102,7 +102,6 @@ public class FastAvroSerdesBenchmark {
     }
     //cache.changeClassLoader();
     //System.gc();
-
   }
 
 //  @Benchmark
