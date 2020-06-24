@@ -105,7 +105,6 @@ public abstract class FastSerdeBase {
     codeModel.build(destination);
 
     String filePath = destination.getAbsolutePath() + generatedSourcesPath + className + ".java";
-    System.out.println(filePath);
     LOGGER.info("Generated source file: " + filePath);
 
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -113,7 +112,7 @@ public abstract class FastSerdeBase {
     LOGGER.info("For source file: " + filePath + ", and the inferred compile class path: " + compileClassPathForCurrentFile);
     int compileResult;
     try {
-      compileResult = compiler.run(null, null, null, "-cp", compileClassPathForCurrentFile, filePath/*, "-XDuseUnsharedTable"*/);
+      compileResult = compiler.run(null, null, null, "-cp", compileClassPathForCurrentFile, filePath, "-XDuseUnsharedTable");
     } catch (Exception e) {
       throw new FastSerdeGeneratorException("Unable to compile:" + className, e);
     }
@@ -121,7 +120,6 @@ public abstract class FastSerdeBase {
     if (compileResult != 0) {
       throw new FastSerdeGeneratorException("Unable to compile:" + className);
     }
-    System.out.println(generatedPackageName + "." + className);
     return classLoader.loadClass(generatedPackageName + "." + className);
   }
 }
