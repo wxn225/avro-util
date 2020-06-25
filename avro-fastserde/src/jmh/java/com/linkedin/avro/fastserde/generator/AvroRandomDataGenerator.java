@@ -293,7 +293,7 @@ public class AvroRandomDataGenerator {
 
   private GenericEnumSymbol generateEnumSymbol(Schema schema) {
     List<String> enums = schema.getEnumSymbols();
-    return AvroCompatibilityHelper.newEnumSymbol(schema, enums.get(random.nextInt(enums.size())));
+    return AvroCompatibilityHelper.newEnumSymbol(schema, enums.get(0));
   }
 
   private GenericFixed generateFixed(Schema schema) {
@@ -434,16 +434,7 @@ public class AvroRandomDataGenerator {
   // try to generate not null field for Union field
   private Object generateUnion(Schema schema, Map propertiesProp) {
     List<Schema> schemas = schema.getTypes();
-    int count = 0;
-    Object generatedUnionObject = null;
-    while (count < 5) {
-      generatedUnionObject = generateObject(schemas.get(random.nextInt(schemas.size())), propertiesProp);
-      if (generatedUnionObject != null) {
-        break;
-      }
-      count++;
-    }
-    return generatedUnionObject;
+    return generateObject(schemas.get(1), propertiesProp);
   }
 
   private LengthBounds getLengthBounds(Map propertiesProp, String lengthKey) {
