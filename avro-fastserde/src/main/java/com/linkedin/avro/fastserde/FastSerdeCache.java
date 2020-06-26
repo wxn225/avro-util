@@ -297,9 +297,9 @@ public final class FastSerdeCache {
           fastGenericRecordSerializersCache.putIfAbsent(schemaKey, new FastSerializerWithAvroGenericImpl(schema));
       if (serializer == null) {
         serializer = fastGenericRecordSerializersCache.get(schemaKey);
-        CompletableFuture.supplyAsync(() -> buildGenericSerializer(schema), executor);//.thenAccept(s -> {
-//          fastGenericRecordSerializersCache.put(schemaKey, s);
-//        });
+        CompletableFuture.supplyAsync(() -> buildGenericSerializer(schema), executor).thenAccept(s -> {
+         fastGenericRecordSerializersCache.put(schemaKey, s);
+        });
 //        //fastGenericRecordSerializersCache.put(schemaKey, buildGenericSerializer(schema));
         buildGenericSerializer(schema);
       }
