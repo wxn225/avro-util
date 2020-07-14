@@ -312,8 +312,8 @@ public final class FastSerdeCache {
     String schemaKey = getSchemaKey(schema, schema);
     String className = getClassName(schema, "Generic");
     fastGenericRecordSerializersCache.put(schemaKey, (FastSerializer<?>)
-                preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_4." + className).newInstance());
-    //preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_4." + className);
+                preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_8." + className).newInstance());
+    //preGenClassLoader.loadClass("com.linkedin.avro.fastserde.generated.serialization.AVRO_1_8." + className);
 
   }
 //for test
